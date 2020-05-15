@@ -7,6 +7,7 @@ categories: []
 tags: []
 description: ''
 ---
+![](/blog/2020-05-15-python_files/coding.jpg)
 
 ```{python}
 x=["apple", "banana", "carrot", "dog", "eggplant", ]
