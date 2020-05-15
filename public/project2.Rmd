@@ -1,0 +1,208 @@
+---
+title: "Project_2"
+author: "Elizabeth McBurney"
+date: '2020-05-15'
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+## Introduction 
+
+```{R}
+install.packages("fivethirtyeight")
+library(fivethirtyeight)
+women <- as.data.frame(bechdel)
+women$b <- ifelse(women$binary=="PASS",1,0)
+women <- na.omit(women)
+library(dplyr)
+library(tidyverse)
+women <- women%>%rename(ct=clean_test)
+head(women)
+```
+I have chosen the data set "bechdel" to analyze the inclusion of women in Hollywood movies. The categorical variables are imdb, title, test, clean_test, and code. The numeric variables are binary, budget, domgross, intgross, budget_2013, domgross_2013, intgross_2013, period_code, and decade_code. The original data was named after Allison Bechdel who created a test to see if the film included female characters or not. If a film named two women in a scene, they had a conversation with each other, and their conversation was not about a man, then the film "passed" the test. This data analyzed includes 1,794 observations and recorded whether the film passed or not, the budget, domestic income, and international income. The money spent and earned was adjusted to match inflation rates in 2013, since the films analyzed include those from the 1970s.
+
+## MANOVA
+
+You can also embed plots, for example:
+
+```{R}
+ggplot(women, aes(x = budget_2013, y = domgross_2013)) + geom_point(alpha = .5) + geom_density_2d(h=2) + coord_fixed() + facet_wrap(~ct)
+man1<-manova(cbind(budget_2013, domgross_2013, intgross_2013)~ct, data=women)
+summary(man1)
+summary.aov(man1)
+women%>%group_by(ct)%>%summarize(mean(budget_2013),mean(domgross_2013),mean(intgross_2013))
+1-(.95^19)
+0.05/19
+pairwise.t.test(women$budget_2013, women$ct, p.adj = "none")
+pairwise.t.test(women$domgross_2013, women$ct, p.adj = "none")
+pairwise.t.test(women$intgross_2013, women$ct, p.adj = "none")
+```
+A one-way MANOVA was conducted to determine if level of inclusivity of women in films has an effect on the budget, domestic gross earnings and international gross earnings. The MANOVA was significant so the level of inclusivity (ct) affects budget, domestic earnings and/or international earnings. A total of 19 tests were conducted. Therfore the chance of Type I error is 0.6226464 and the adjusted p-value is 0.002631579. Next Univariate ANOVAs were performed, and based on the adjusted significance level, ct only had a significant effect on budget_2013. Post-hoc t-tests were performed for budget_2013, domgross_2013, and intgross_2013. In the post-hoc test for budget_2013 and ct, there was a significant difference in budget between "ok" and "nowomen", and between "ok" and "notalk". In the post-hoc test for domgross_2013 and ct, there was a significant difference in domestic gross earnings between "notalk" and "ok". In the post-hoc test for intgross_2013 and ct, there was a significant difference in international gross earnings between "notalk" and "ok". The DV plot was irregular, therefore indicating and assumptions were violated. This is not surprising because MANOVA has many assumptions and it is very difficult to meet all of them.  
+
+## Randomization Test
+
+```{R}
+women%>%group_by(binary)%>%summarize(means=mean(budget))%>%summarize(`mean_diff:`=diff(means))
+head(perm1<-data.frame(condition=women$binary,budget=sample(women$budget)))
+perm1%>%group_by(condition)%>%summarize(means=mean(budget))%>%summarize(`mean_diff:`=diff(means))
+head(perm2<-data.frame(condition=women$binary,budget=sample(women$budget))) 
+perm2%>%group_by(condition)%>%
+  summarize(means=mean(budget))%>%summarize(`mean_diff:`=diff(means))
+
+rand_dist<-vector()
+for(i in 1:5000){
+  new<-data.frame(budget=sample(women$budget),condition=women$binary)
+  rand_dist[i]<-mean(new[new$condition=="PASS",]$budget)-
+    mean(new[new$condition=="FAIL",]$budget)}
+{hist(rand_dist,main="",ylab=""); abline(v = -16065800	,col="red")}
+mean(rand_dist>16065800 | rand_dist< -16065800)
+t.test(data = women, budget~binary)
+```
+The null hypothesis is that there is no difference in the mean budget for films based on the level of female inclusion in the film (ct). The alternative hypothesis is that there is at least one difference in the budget between the films based on the different levels of female inclusion in the film. After running a two-tailed p-value test, I get a vlaue of 0. This means that there are no randomized mean_diffs that are more extreme than the actual difference of means. After running a Welch t-test, the p-value is very small. Therefore, I reject the null hypothesis and conclude there a difference in the budget in at least one of the ct levels.    
+
+## Linear Regression
+
+```{R}
+women$b_c <- (b_c = women$budget_2013 - mean(women$budget_2013))
+women$i_c <- (i_c = women$intgross_2013 - mean(women$intgross_2013, na.rm=T))
+women$ct <- factor(women$ct, ordered = FALSE)
+fit <- lm(i_c~b_c+ct, data = women); summary(fit)
+
+ggplot(women, aes(x=b_c, y=i_c,group=ct))+geom_point(aes(color=ct))+
+  geom_smooth(method="lm",formula=y~1,se=F,fullrange=T,aes(color=ct))+
+theme(legend.position=c(.9,.19))+xlab("")
+
+resids<-fit$residuals
+fitvals<-fit$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, color='red')
+ggplot()+geom_histogram(aes(resids))+stat_bin()
+
+library(sandwich)
+library(lmtest)
+coeftest(fit, vcov = vcovHC(fit))
+```
+The GLM for this data is analyzing the effect of budget and ct on the international gross earnings of various films. The coefficients indicate that when controlling for all other  variables, a one unit increase in a variable will increase the international gross earnings by a certain amount. For example, when controlling for all other variables, a one unit increase in budget will increase the international gross earnings by 2.0865e-01. Overall, this model is not a good predictor of the data because only 0.4819 the variance can be explained by the model. When the data is recomputed to account for robust standard errors, b_c, ctnotalk, and ctok have a significant effect on the international gross earnings. In the original model only b_c and ctok were significant. Additionally, the standard errors decrease in the recomputed model. 
+
+## Linear Regression with Interaction
+
+```{R}
+fit2 <- lm(i_c~b_c*ct, data = women); summary(fit2)
+
+resids<-fit2$residuals
+fitvals<-fit2$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, color='red')
+ggplot()+geom_histogram(aes(resids))+stat_bin()
+
+boot_dat<- sample_frac(women, replace=T)
+set.seed(348)
+samp_distn<-replicate(5000, {
+boot_dat <- sample_frac(women, replace=T) 
+fit <- lm(i_c~b_c*ct, data=boot_dat) 
+coef(fit) 
+})
+samp_distn %>% t %>% as.data.frame %>% summarize_all(sd)
+```
+In the GLM model including interaction, b_c, ctok, b_c:ctnotalk, b_c:ctmen, b_c:ctdubious, and b_c:ctok have a significant effect on international gross earnings. The p-values on the interaction model when compared to the GLM without interaction. When the interaction model is recomputed to account for bootstapped robust errors, the standard errors change. In the recomputed model the standard errors for b_c, b_c:notalk, b_c:men, and b_c:ok decreased, but the rest of the standard errors increased or remained the same. It is expected for standard error to increase with the interaction model.  
+
+## Logistic Regression
+
+```{R}
+fit3<-glm(b~i_c+b_c,data=women,family=binomial); summary(fit3)
+
+probs<-predict(fit3,type="response")
+women$probs <- predict(fit3,type="response")
+table(predict=as.numeric(probs>0.5), truth=women$binary)%>%addmargins
+407/744
+525/856
+407/738
+(525+407)/1600
+
+women$logit<-predict(fit3,type="link")
+women%>%ggplot()+geom_density(aes(logit,color=binary,fill=binary), alpha=.4)+theme(legend.position=c(.85,.85))+geom_vline(xintercept=0)+xlab("predictor (logit)")
+
+install.packages("plotROC")
+library(plotROC)
+ROCplot<-ggplot(women)+geom_roc(aes(d=b,m=b_c), n.cuts=0)
+ROCplot
+calc_auc(ROCplot)
+
+library(tidyverse)
+library(lmtest)
+
+women <- women%>%na.omit(women)
+probs<-predict(fit3,type="response")
+class_diag<-function(probs,truth){
+if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+prediction<-ifelse(probs>.5,1,0)
+acc=mean(truth==prediction)
+sens=mean(prediction[truth==1]==1)
+spec=mean(prediction[truth==0]==0)
+ppv=mean(truth[prediction==1]==1)
+#CALCULATE EXACT AUC
+ord<-order(probs, decreasing=TRUE)
+probs <- probs[ord]; truth <- truth[ord]
+TPR=cumsum(truth)/max(1,sum(truth))
+FPR=cumsum(!truth)/max(1,sum(!truth))
+dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+n <- length(TPR)
+auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+data.frame(acc,sens,spec,ppv,auc)
+}
+
+set.seed(1234)
+k=10 
+data<-women[sample(nrow(women)),] 
+folds<-cut(seq(1:nrow(women)),breaks=k,labels=F) 
+diags<-NULL
+for(i in 1:k){
+train<-data[folds!=i,]
+test<-data[folds==i,]
+truth<-test$b
+fit<-glm(b~i_c+b_c,data=train,family="binomial")
+probs<-predict(fit,newdata = test,type="response")
+diags<-rbind(diags,class_diag(probs,truth))
+}
+summarize_all(diags,mean)
+```
+In the logistic model, the coefficients are important indicators for prediciting the probability that b is equal to 1. The probability of predicting b=1 changes by e^6.028e-10 with every unit increase in i_c, and changes by e^-8.441e-09 with every unit increase in b_c. The sensitivity, specificity, accuracy and precision were calculated using the confusion matrix. The aforementioned values are: Sensitivity = 0.547043, specificity = 0.6133178, recall = 0.5514905, and accuracy is 0.5825. These values are very low and indicate the model is not a good predictor for the data. The AUC was calculated from the ROCplot. The AUC is 0.3980936 which shows the model is a very bad predictor of the data. After running the 10-fold CV the AUC increased dramatically to 0.6029988, however, the model is still a bad predictor for new data.    
+
+## LASSO Regression
+
+```{R}
+library(glmnet)
+y<-as.matrix(women$b)
+x <- model.matrix(b~., data=women)
+set.seed(1234)
+cv<-cv.glmnet(x,y,family="binomial")
+lasso <- glmnet(x,y, family = "binomial", lambda = cv$lambda.1se)
+head(coef(lasso))
+
+set.seed(1234)
+k=10 
+data<-women[sample(nrow(women)),] 
+folds<-cut(seq(1:nrow(women)),breaks=k,labels=F) 
+diags<-NULL
+for(i in 1:k){
+train<-data[folds!=i,]
+test<-data[folds==i,]
+truth<-test$b
+fit<-glm(b~binary+ct,data=train,family="binomial")
+probs<-predict(fit,newdata = test,type="response")
+diags<-rbind(diags,class_diag(probs,truth))
+}
+summarize_all(diags,mean)
+```
+After running the LASSO regression, it shows that only b, level, and ctok are good predictors for predicting if binary is pass or fail. Since b, level and ctok are all representing the same thing, acc, sens, spec, ppv, and auc are all 1 because the LASSO regression appears to be a very good model. However, that is not true because previous AUCs were very low, and there were no other predictors in the LASSO regression. 

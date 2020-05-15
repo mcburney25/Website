@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Elizabeth McBurney" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.ico">
+    <title>Project_2</title>
+    <meta name="generator" content="Hugo 0.70.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../blog/">BLOG</a></li>
+        
+        <li><a href="../projects/">PROJECTS</a></li>
+        
+        <li><a href="../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../project2/">Project_2</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          May 15, 2020
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="r-markdown" class="section level2">
+<h2>R Markdown</h2>
+<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
+<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<pre class="r"><code>install.packages(&quot;fivethirtyeight&quot;)</code></pre>
+<pre><code>## Installing package into &#39;/stor/home/elm2795/R/x86_64-pc-linux-gnu-library/3.4&#39;
+## (as &#39;lib&#39; is unspecified)</code></pre>
+<pre class="r"><code>library(fivethirtyeight)
+women &lt;- as.data.frame(bechdel)
+women$b &lt;- ifelse(women$binary==&quot;PASS&quot;,1,0)
+women &lt;- na.omit(women)
+library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ──────────────────────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✔ ggplot2 3.3.0          ✔ purrr   0.3.3     
+## ✔ tibble  2.1.3          ✔ stringr 1.4.0     
+## ✔ tidyr   1.0.0.9000     ✔ forcats 0.4.0     
+## ✔ readr   1.3.1</code></pre>
+<pre><code>## ── Conflicts ─────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>women &lt;- women%&gt;%rename(ct=clean_test)
+head(women)</code></pre>
+<pre><code>##   year      imdb            title            test     ct binary    budget
+## 1 2013 tt1711425        21 &amp; Over          notalk notalk   FAIL  13000000
+## 2 2012 tt1343727         Dredd 3D     ok-disagree     ok   PASS  45000000
+## 3 2013 tt2024544 12 Years a Slave notalk-disagree notalk   FAIL  20000000
+## 4 2013 tt1272878           2 Guns          notalk notalk   FAIL  61000000
+## 5 2013 tt0453562               42             men    men   FAIL  40000000
+## 6 2013 tt1335975         47 Ronin             men    men   FAIL 225000000
+##   domgross  intgross     code budget_2013 domgross_2013 intgross_2013
+## 1 25682380  42195766 2013FAIL    13000000      25682380      42195766
+## 2 13414714  40868994 2012PASS    45658735      13611086      41467257
+## 3 53107035 158607035 2013FAIL    20000000      53107035     158607035
+## 4 75612460 132493015 2013FAIL    61000000      75612460     132493015
+## 5 95020213  95020213 2013FAIL    40000000      95020213      95020213
+## 6 38362475 145803842 2013FAIL   225000000      38362475     145803842
+##   period_code decade_code b
+## 1           1           1 0
+## 2           1           1 1
+## 3           1           1 0
+## 4           1           1 0
+## 5           1           1 0
+## 6           1           1 0</code></pre>
+<p>I have chosen the data set “bechdel” to analyze the inclusion of women in Hollywood movies. The categorical variables are imdb, title, test, clean_test, and code. The numeric variables are binary, budget, domgross, intgross, budget_2013, domgross_2013, intgross_2013, period_code, and decade_code. The original data was named after Allison Bechdel who created a test to see if the film included female characters or not. If a film named two women in a scene, they had a conversation with each other, and their conversation was not about a man, then the film “passed” the test. This data analyzed includes 1,794 observations and recorded whether the film passed or not, the budget, domestic income, and international income. The money spent and earned was adjusted to match inflation rates in 2013, since the films analyzed include those from the 1970s.</p>
+</div>
+<div id="manova" class="section level2">
+<h2>MANOVA</h2>
+<p>You can also embed plots, for example:</p>
+<pre class="r"><code>ggplot(women, aes(x = budget_2013, y = domgross_2013)) + geom_point(alpha = .5) + geom_density_2d(h=2) + coord_fixed() + facet_wrap(~ct)</code></pre>
+<pre><code>## Warning: stat_contour(): Zero contours were generated</code></pre>
+<pre><code>## Warning in min(x): no non-missing arguments to min; returning Inf</code></pre>
+<pre><code>## Warning in max(x): no non-missing arguments to max; returning -Inf</code></pre>
+<pre><code>## Warning: stat_contour(): Zero contours were generated</code></pre>
+<pre><code>## Warning in min(x): no non-missing arguments to min; returning Inf</code></pre>
+<pre><code>## Warning in max(x): no non-missing arguments to max; returning -Inf</code></pre>
+<pre><code>## Warning: stat_contour(): Zero contours were generated</code></pre>
+<pre><code>## Warning in min(x): no non-missing arguments to min; returning Inf</code></pre>
+<pre><code>## Warning in max(x): no non-missing arguments to max; returning -Inf</code></pre>
+<pre><code>## Warning: stat_contour(): Zero contours were generated</code></pre>
+<pre><code>## Warning in min(x): no non-missing arguments to min; returning Inf</code></pre>
+<pre><code>## Warning in max(x): no non-missing arguments to max; returning -Inf</code></pre>
+<pre><code>## Warning: stat_contour(): Zero contours were generated</code></pre>
+<pre><code>## Warning in min(x): no non-missing arguments to min; returning Inf</code></pre>
+<pre><code>## Warning in max(x): no non-missing arguments to max; returning -Inf</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>man1&lt;-manova(cbind(budget_2013, domgross_2013, intgross_2013)~ct, data=women)
+summary(man1)</code></pre>
+<pre><code>##             Df   Pillai approx F num Df den Df    Pr(&gt;F)    
+## ct           4 0.039395   5.3059     12   4785 5.572e-09 ***
+## Residuals 1595                                              
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>summary.aov(man1)</code></pre>
+<pre><code>##  Response budget_2013 :
+##               Df     Sum Sq    Mean Sq F value    Pr(&gt;F)    
+## ct             4 1.5648e+17 3.9120e+16  12.816 2.855e-10 ***
+## Residuals   1595 4.8686e+18 3.0524e+15                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response domgross_2013 :
+##               Df     Sum Sq    Mean Sq F value   Pr(&gt;F)   
+## ct             4 1.4235e+17 3.5588e+16  3.6586 0.005664 **
+## Residuals   1595 1.5515e+19 9.7272e+15                    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response intgross_2013 :
+##               Df     Sum Sq    Mean Sq F value   Pr(&gt;F)   
+## ct             4 9.6182e+17 2.4046e+17  3.6195 0.006064 **
+## Residuals   1595 1.0596e+20 6.6433e+16                    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>women%&gt;%group_by(ct)%&gt;%summarize(mean(budget_2013),mean(domgross_2013),mean(intgross_2013))</code></pre>
+<pre><code>## # A tibble: 5 x 4
+##   ct      `mean(budget_2013)` `mean(domgross_2013)` `mean(intgross_2013)`
+##   &lt;ord&gt;                 &lt;dbl&gt;                 &lt;dbl&gt;                 &lt;dbl&gt;
+## 1 nowomen           65472900.             74606246.            173735249.
+## 2 notalk            69829341.             97743812.            222021962.
+## 3 men               59813043.             87298025.            187938516.
+## 4 dubious           62751722.             87875132.            205241655.
+## 5 ok                47343994.             76317777.            165255435.</code></pre>
+<pre class="r"><code>1-(.95^19)</code></pre>
+<pre><code>## [1] 0.6226464</code></pre>
+<pre class="r"><code>0.05/19</code></pre>
+<pre><code>## [1] 0.002631579</code></pre>
+<pre class="r"><code>pairwise.t.test(women$budget_2013, women$ct, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  women$budget_2013 and women$ct 
+## 
+##         nowomen notalk  men     dubious
+## notalk  0.44625 -       -       -      
+## men     0.39384 0.04531 -       -      
+## dubious 0.70234 0.20852 0.65406 -      
+## ok      0.00095 1.5e-11 0.00832 0.00422
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(women$domgross_2013, women$ct, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  women$domgross_2013 and women$ct 
+## 
+##         nowomen notalk  men     dubious
+## notalk  0.02354 -       -       -      
+## men     0.28416 0.24203 -       -      
+## dubious 0.29662 0.32589 0.96068 -      
+## ok      0.86100 0.00029 0.19264 0.22880
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(women$intgross_2013, women$ct, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  women$intgross_2013 and women$ct 
+## 
+##         nowomen notalk  men     dubious
+## notalk  0.07047 -       -       -      
+## men     0.64645 0.14415 -       -      
+## dubious 0.34296 0.52265 0.57167 -      
+## ok      0.73992 0.00024 0.30304 0.11117
+## 
+## P value adjustment method: none</code></pre>
+<p>A one-way MANOVA was conducted to determine if level of inclusivity of women in films has an effect on the budget, domestic gross earnings and international gross earnings. The MANOVA was significant so the level of inclusivity (ct) affects budget, domestic earnings and/or international earnings. A total of 19 tests were conducted. Therfore the chance of Type I error is 0.6226464 and the adjusted p-value is 0.002631579. Next Univariate ANOVAs were performed, and based on the adjusted significance level, ct only had a significant effect on budget_2013. Post-hoc t-tests were performed for budget_2013, domgross_2013, and intgross_2013. In the post-hoc test for budget_2013 and ct, there was a significant difference in budget between “ok” and “nowomen”, and between “ok” and “notalk”. In the post-hoc test for domgross_2013 and ct, there was a significant difference in domestic gross earnings between “notalk” and “ok”. In the post-hoc test for intgross_2013 and ct, there was a significant difference in international gross earnings between “notalk” and “ok”. The DV plot was irregular, therefore indicating and assumptions were violated. This is not surprising because MANOVA has many assumptions and it is very difficult to meet all of them.</p>
+</div>
+<div id="randomization-test" class="section level2">
+<h2>Randomization Test</h2>
+<pre class="r"><code>women%&gt;%group_by(binary)%&gt;%summarize(means=mean(budget))%&gt;%summarize(`mean_diff:`=diff(means))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `mean_diff:`
+##          &lt;dbl&gt;
+## 1   -16065800.</code></pre>
+<pre class="r"><code>head(perm1&lt;-data.frame(condition=women$binary,budget=sample(women$budget)))</code></pre>
+<pre><code>##   condition   budget
+## 1      FAIL 40000000
+## 2      PASS  2750000
+## 3      FAIL 30000000
+## 4      FAIL  9900000
+## 5      FAIL 25000000
+## 6      FAIL 17500000</code></pre>
+<pre class="r"><code>perm1%&gt;%group_by(condition)%&gt;%summarize(means=mean(budget))%&gt;%summarize(`mean_diff:`=diff(means))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `mean_diff:`
+##          &lt;dbl&gt;
+## 1     4452102.</code></pre>
+<pre class="r"><code>head(perm2&lt;-data.frame(condition=women$binary,budget=sample(women$budget))) </code></pre>
+<pre><code>##   condition   budget
+## 1      FAIL  7000000
+## 2      PASS 11000000
+## 3      FAIL 80000000
+## 4      FAIL 45000000
+## 5      FAIL 65000000
+## 6      FAIL 25000000</code></pre>
+<pre class="r"><code>perm2%&gt;%group_by(condition)%&gt;%
+  summarize(means=mean(budget))%&gt;%summarize(`mean_diff:`=diff(means))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `mean_diff:`
+##          &lt;dbl&gt;
+## 1     2746111.</code></pre>
+<pre class="r"><code>rand_dist&lt;-vector()
+for(i in 1:5000){
+  new&lt;-data.frame(budget=sample(women$budget),condition=women$binary)
+  rand_dist[i]&lt;-mean(new[new$condition==&quot;PASS&quot;,]$budget)-
+    mean(new[new$condition==&quot;FAIL&quot;,]$budget)}
+{hist(rand_dist,main=&quot;&quot;,ylab=&quot;&quot;); abline(v = -16065800  ,col=&quot;red&quot;)}</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>mean(rand_dist&gt;16065800 | rand_dist&lt; -16065800)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>t.test(data = women, budget~binary)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  budget by binary
+## t = 6.6356, df = 1593.8, p-value = 4.414e-11
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  11316855 20814745
+## sample estimates:
+## mean in group FAIL mean in group PASS 
+##           55857716           39791916</code></pre>
+<p>The null hypothesis is that there is no difference in the mean budget for films based on the level of female inclusion in the film (ct). The alternative hypothesis is that there is at least one difference in the budget between the films based on the different levels of female inclusion in the film. After running a two-tailed p-value test, I get a vlaue of 0. This means that there are no randomized mean_diffs that are more extreme than the actual difference of means. After running a Welch t-test, the p-value is very small. Therefore, I reject the null hypothesis and conclude there a difference in the budget in at least one of the ct levels.</p>
+</div>
+<div id="linear-regression" class="section level2">
+<h2>Linear Regression</h2>
+<pre class="r"><code>women$b_c &lt;- (b_c = women$budget_2013 - mean(women$budget_2013))
+women$i_c &lt;- (i_c = women$intgross_2013 - mean(women$intgross_2013, na.rm=T))
+women$ct &lt;- factor(women$ct, ordered = FALSE)
+fit &lt;- lm(i_c~b_c+ct, data = women); summary(fit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = i_c ~ b_c + ct, data = women)
+## 
+## Residuals:
+##        Min         1Q     Median         3Q        Max 
+## -626226746  -75684871  -17572571   34683118 2222560984 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -3.934e+07  1.715e+07  -2.294  0.02192 *  
+## b_c          3.228e+00  8.436e-02  38.266  &lt; 2e-16 ***
+## ctnotalk     3.422e+07  1.927e+07   1.776  0.07589 .  
+## ctmen        3.247e+07  2.236e+07   1.452  0.14665    
+## ctdubious    4.029e+07  2.399e+07   1.680  0.09321 .  
+## ctok         5.004e+07  1.851e+07   2.704  0.00693 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 186100000 on 1594 degrees of freedom
+## Multiple R-squared:  0.4835, Adjusted R-squared:  0.4819 
+## F-statistic: 298.4 on 5 and 1594 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>ggplot(women, aes(x=b_c, y=i_c,group=ct))+geom_point(aes(color=ct))+
+  geom_smooth(method=&quot;lm&quot;,formula=y~1,se=F,fullrange=T,aes(color=ct))+
+theme(legend.position=c(.9,.19))+xlab(&quot;&quot;)</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>resids&lt;-fit$residuals
+fitvals&lt;-fit$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, color=&#39;red&#39;)</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
+<pre class="r"><code>ggplot()+geom_histogram(aes(resids))+stat_bin()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-4-3.png" width="672" /></p>
+<pre class="r"><code>library(sandwich)
+library(lmtest)</code></pre>
+<pre><code>## Loading required package: zoo</code></pre>
+<pre><code>## 
+## Attaching package: &#39;zoo&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     as.Date, as.Date.numeric</code></pre>
+<pre class="r"><code>coeftest(fit, vcov = vcovHC(fit))</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##                Estimate  Std. Error t value  Pr(&gt;|t|)    
+## (Intercept) -3.9338e+07  1.4596e+07 -2.6950  0.007112 ** 
+## b_c          3.2281e+00  2.0865e-01 15.4714 &lt; 2.2e-16 ***
+## ctnotalk     3.4224e+07  1.7252e+07  1.9838  0.047454 *  
+## ctmen        3.2474e+07  2.1976e+07  1.4777  0.139689    
+## ctdubious    4.0291e+07  2.2935e+07  1.7568  0.079151 .  
+## ctok         5.0042e+07  1.6927e+07  2.9564  0.003158 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>The GLM for this data is analyzing the effect of budget and ct on the international gross earnings of various films. The coefficients indicate that when controlling for all other variables, a one unit increase in a variable will increase the international gross earnings by a certain amount. For example, when controlling for all other variables, a one unit increase in budget will increase the international gross earnings by 2.0865e-01. Overall, this model is not a good predictor of the data because only 0.4819 the variance can be explained by the model. When the data is recomputed to account for robust standard errors, b_c, ctnotalk, and ctok have a significant effect on the international gross earnings. In the original model only b_c and ctok were significant. Additionally, the standard errors decrease in the recomputed model.</p>
+</div>
+<div id="linear-regression-with-interaction" class="section level2">
+<h2>Linear Regression with Interaction</h2>
+<pre class="r"><code>fit2 &lt;- lm(i_c~b_c*ct, data = women); summary(fit2)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = i_c ~ b_c * ct, data = women)
+## 
+## Residuals:
+##        Min         1Q     Median         3Q        Max 
+## -667445294  -75755148  -17826551   31580472 2179345923 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   -3.287e+07  1.726e+07  -1.905  0.05699 .  
+## b_c            2.421e+00  2.907e-01   8.329  &lt; 2e-16 ***
+## ctnotalk       2.922e+07  1.946e+07   1.502  0.13333    
+## ctmen          2.556e+07  2.244e+07   1.139  0.25483    
+## ctdubious      3.339e+07  2.409e+07   1.386  0.16594    
+## ctok           4.537e+07  1.860e+07   2.439  0.01484 *  
+## b_c:ctnotalk   6.881e-01  3.293e-01   2.090  0.03680 *  
+## b_c:ctmen      9.967e-01  3.649e-01   2.731  0.00638 ** 
+## b_c:ctdubious  8.886e-01  3.980e-01   2.232  0.02573 *  
+## b_c:ctok       9.848e-01  3.213e-01   3.065  0.00221 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 185700000 on 1590 degrees of freedom
+## Multiple R-squared:  0.487,  Adjusted R-squared:  0.4841 
+## F-statistic: 167.7 on 9 and 1590 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>resids&lt;-fit2$residuals
+fitvals&lt;-fit2$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, color=&#39;red&#39;)</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>ggplot()+geom_histogram(aes(resids))+stat_bin()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+<pre class="r"><code>boot_dat&lt;- sample_frac(women, replace=T)
+set.seed(348)
+samp_distn&lt;-replicate(5000, {
+boot_dat &lt;- sample_frac(women, replace=T) 
+fit &lt;- lm(i_c~b_c*ct, data=boot_dat) 
+coef(fit) 
+})
+samp_distn %&gt;% t %&gt;% as.data.frame %&gt;% summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept)       b_c ctnotalk    ctmen ctdubious     ctok b_c:ctnotalk
+## 1    12754689 0.3018472 14973115 19177814  20497484 15949079    0.3715058
+##   b_c:ctmen b_c:ctdubious  b_c:ctok
+## 1 0.8844402     0.5297428 0.4617088</code></pre>
+<p>In the GLM model including interaction, b_c, ctok, b_c:ctnotalk, b_c:ctmen, b_c:ctdubious, and b_c:ctok have a significant effect on international gross earnings. The p-values on the interaction model when compared to the GLM without interaction. When the interaction model is recomputed to account for bootstapped robust errors, the standard errors change. In the recomputed model the standard errors for b_c, b_c:notalk, b_c:men, and b_c:ok decreased, but the rest of the standard errors increased or remained the same. It is expected for standard error to increase with the interaction model.</p>
+</div>
+<div id="logistic-regression" class="section level2">
+<h2>Logistic Regression</h2>
+<pre class="r"><code>fit3&lt;-glm(b~i_c+b_c,data=women,family=binomial); summary(fit3)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = b ~ i_c + b_c, family = binomial, data = women)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.3991  -1.1521  -0.8035   1.1543   2.0510  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -1.511e-01  5.106e-02  -2.960  0.00308 ** 
+## i_c          6.028e-10  2.824e-10   2.134  0.03282 *  
+## b_c         -8.441e-09  1.360e-09  -6.206 5.44e-10 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 2210.2  on 1599  degrees of freedom
+## Residual deviance: 2158.5  on 1597  degrees of freedom
+## AIC: 2164.5
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<pre class="r"><code>probs&lt;-predict(fit3,type=&quot;response&quot;)
+women$probs &lt;- predict(fit3,type=&quot;response&quot;)
+table(predict=as.numeric(probs&gt;0.5), truth=women$binary)%&gt;%addmargins</code></pre>
+<pre><code>##        truth
+## predict FAIL PASS  Sum
+##     0    525  337  862
+##     1    331  407  738
+##     Sum  856  744 1600</code></pre>
+<pre class="r"><code>407/744</code></pre>
+<pre><code>## [1] 0.547043</code></pre>
+<pre class="r"><code>525/856</code></pre>
+<pre><code>## [1] 0.6133178</code></pre>
+<pre class="r"><code>407/738</code></pre>
+<pre><code>## [1] 0.5514905</code></pre>
+<pre class="r"><code>(525+407)/1600</code></pre>
+<pre><code>## [1] 0.5825</code></pre>
+<pre class="r"><code>women$logit&lt;-predict(fit3,type=&quot;link&quot;)
+women%&gt;%ggplot()+geom_density(aes(logit,color=binary,fill=binary), alpha=.4)+theme(legend.position=c(.85,.85))+geom_vline(xintercept=0)+xlab(&quot;predictor (logit)&quot;)</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>install.packages(&quot;plotROC&quot;)</code></pre>
+<pre><code>## Installing package into &#39;/stor/home/elm2795/R/x86_64-pc-linux-gnu-library/3.4&#39;
+## (as &#39;lib&#39; is unspecified)</code></pre>
+<pre class="r"><code>library(plotROC)
+ROCplot&lt;-ggplot(women)+geom_roc(aes(d=b,m=b_c), n.cuts=0)
+ROCplot</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<pre class="r"><code>calc_auc(ROCplot)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.3980936</code></pre>
+<pre class="r"><code>library(tidyverse)
+library(lmtest)
+
+women &lt;- women%&gt;%na.omit(women)
+probs&lt;-predict(fit3,type=&quot;response&quot;)
+class_diag&lt;-function(probs,truth){
+if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE) truth&lt;-as.numeric(truth)-1
+tab&lt;-table(factor(probs&gt;.5,levels=c(&quot;FALSE&quot;,&quot;TRUE&quot;)),truth)
+prediction&lt;-ifelse(probs&gt;.5,1,0)
+acc=mean(truth==prediction)
+sens=mean(prediction[truth==1]==1)
+spec=mean(prediction[truth==0]==0)
+ppv=mean(truth[prediction==1]==1)
+#CALCULATE EXACT AUC
+ord&lt;-order(probs, decreasing=TRUE)
+probs &lt;- probs[ord]; truth &lt;- truth[ord]
+TPR=cumsum(truth)/max(1,sum(truth))
+FPR=cumsum(!truth)/max(1,sum(!truth))
+dup&lt;-c(probs[-1]&gt;=probs[-length(probs)], FALSE)
+TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+n &lt;- length(TPR)
+auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+data.frame(acc,sens,spec,ppv,auc)
+}
+
+set.seed(1234)
+k=10 
+data&lt;-women[sample(nrow(women)),] 
+folds&lt;-cut(seq(1:nrow(women)),breaks=k,labels=F) 
+diags&lt;-NULL
+for(i in 1:k){
+train&lt;-data[folds!=i,]
+test&lt;-data[folds==i,]
+truth&lt;-test$b
+fit&lt;-glm(b~i_c+b_c,data=train,family=&quot;binomial&quot;)
+probs&lt;-predict(fit,newdata = test,type=&quot;response&quot;)
+diags&lt;-rbind(diags,class_diag(probs,truth))
+}
+summarize_all(diags,mean)</code></pre>
+<pre><code>##        acc      sens      spec       ppv       auc
+## 1 0.574375 0.5321233 0.6142805 0.5466672 0.6029988</code></pre>
+<p>In the logistic model, the coefficients are important indicators for prediciting the probability that b is equal to 1. The probability of predicting b=1 changes by e^6.028e-10 with every unit increase in i_c, and changes by e^-8.441e-09 with every unit increase in b_c. The sensitivity, specificity, accuracy and precision were calculated using the confusion matrix. The aforementioned values are: Sensitivity = 0.547043, specificity = 0.6133178, recall = 0.5514905, and accuracy is 0.5825. These values are very low and indicate the model is not a good predictor for the data. The AUC was calculated from the ROCplot. The AUC is 0.3980936 which shows the model is a very bad predictor of the data. After running the 10-fold CV the AUC increased dramatically to 0.6029988, however, the model is still a bad predictor for new data.</p>
+</div>
+<div id="lasso-regression" class="section level2">
+<h2>LASSO Regression</h2>
+<pre class="r"><code>library(glmnet)</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:tidyr&#39;:
+## 
+##     expand, pack, unpack</code></pre>
+<pre><code>## Loading required package: foreach</code></pre>
+<pre><code>## 
+## Attaching package: &#39;foreach&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:purrr&#39;:
+## 
+##     accumulate, when</code></pre>
+<pre><code>## Loaded glmnet 2.0-16</code></pre>
+<pre class="r"><code>y&lt;-as.matrix(women$b)
+x &lt;- model.matrix(b~., data=women)
+set.seed(1234)
+cv&lt;-cv.glmnet(x,y,family=&quot;binomial&quot;)
+lasso &lt;- glmnet(x,y, family = &quot;binomial&quot;, lambda = cv$lambda.1se)
+head(coef(lasso))</code></pre>
+<pre><code>## 6 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                      s0
+## (Intercept)   -5.319487
+## (Intercept)    .       
+## year           .       
+## imdbtt0035423  .       
+## imdbtt0099088  .       
+## imdbtt0099253  .</code></pre>
+<pre class="r"><code>set.seed(1234)
+k=10 
+data&lt;-women[sample(nrow(women)),] 
+folds&lt;-cut(seq(1:nrow(women)),breaks=k,labels=F) 
+diags&lt;-NULL
+for(i in 1:k){
+train&lt;-data[folds!=i,]
+test&lt;-data[folds==i,]
+truth&lt;-test$b
+fit&lt;-glm(b~binary+ct,data=train,family=&quot;binomial&quot;)
+probs&lt;-predict(fit,newdata = test,type=&quot;response&quot;)
+diags&lt;-rbind(diags,class_diag(probs,truth))
+}</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<pre><code>## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = ifelse(type
+## == : prediction from a rank-deficient fit may be misleading</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<pre><code>## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = ifelse(type
+## == : prediction from a rank-deficient fit may be misleading</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<pre><code>## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = ifelse(type
+## == : prediction from a rank-deficient fit may be misleading</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<pre><code>## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = ifelse(type
+## == : prediction from a rank-deficient fit may be misleading</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<pre><code>## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = ifelse(type
+## == : prediction from a rank-deficient fit may be misleading</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<pre><code>## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = ifelse(type
+## == : prediction from a rank-deficient fit may be misleading</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<pre><code>## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = ifelse(type
+## == : prediction from a rank-deficient fit may be misleading</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<pre><code>## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = ifelse(type
+## == : prediction from a rank-deficient fit may be misleading</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<pre><code>## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = ifelse(type
+## == : prediction from a rank-deficient fit may be misleading</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<pre><code>## Warning in predict.lm(object, newdata, se.fit, scale = 1, type = ifelse(type
+## == : prediction from a rank-deficient fit may be misleading</code></pre>
+<pre class="r"><code>summarize_all(diags,mean)</code></pre>
+<pre><code>##   acc sens spec ppv auc
+## 1   1    1    1   1   1</code></pre>
+<p>After running the LASSO regression, it shows that only b, level, and ctok are good predictors for predicting if binary is pass or fail. Since b, level and ctok are all representing the same thing, acc, sens, spec, ppv, and auc are all 1 because the LASSO regression appears to be a very good model. However, that is not true because previous AUCs were very low, and there were no other predictors in the LASSO regression.</p>
+</div>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../js/docs.min.js"></script>
+<script src="../js/main.js"></script>
+
+<script src="../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

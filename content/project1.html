@@ -1,0 +1,315 @@
+---
+title: "Project 1"
+author: "Elizabeth McBurney"
+date: '2020-05-15'
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+
+<div id="r-markdown" class="section level2">
+<h2>R Markdown</h2>
+<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
+<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<pre class="r"><code>#install.packages(&quot;fivethirtyeight&quot;)
+library(fivethirtyeight)
+#install.packages(&quot;tidyverse&quot;)
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ──────────────────────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✔ ggplot2 3.3.0          ✔ purrr   0.3.3     
+## ✔ tibble  2.1.3          ✔ dplyr   0.8.5     
+## ✔ tidyr   1.0.0.9000     ✔ stringr 1.4.0     
+## ✔ readr   1.3.1          ✔ forcats 0.4.0</code></pre>
+<pre><code>## ── Conflicts ─────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>glimpse(murder_2015_final)</code></pre>
+<pre><code>## Observations: 83
+## Variables: 5
+## $ city         &lt;chr&gt; &quot;Baltimore&quot;, &quot;Chicago&quot;, &quot;Houston&quot;, &quot;Cleveland&quot;, &quot;Washing…
+## $ state        &lt;chr&gt; &quot;Maryland&quot;, &quot;Illinois&quot;, &quot;Texas&quot;, &quot;Ohio&quot;, &quot;D.C.&quot;, &quot;Wiscon…
+## $ murders_2014 &lt;int&gt; 211, 411, 242, 63, 105, 90, 248, 78, 41, 159, 45, 56, 31…
+## $ murders_2015 &lt;int&gt; 344, 478, 303, 120, 162, 145, 280, 109, 72, 188, 73, 81,…
+## $ change       &lt;int&gt; 133, 67, 61, 57, 57, 55, 32, 31, 31, 29, 28, 25, 22, 22,…</code></pre>
+<pre class="r"><code>glimpse(bad_drivers)</code></pre>
+<pre><code>## Observations: 51
+## Variables: 8
+## $ state               &lt;chr&gt; &quot;Alabama&quot;, &quot;Alaska&quot;, &quot;Arizona&quot;, &quot;Arkansas&quot;, &quot;Cali…
+## $ num_drivers         &lt;dbl&gt; 18.8, 18.1, 18.6, 22.4, 12.0, 13.6, 10.8, 16.2, 5…
+## $ perc_speeding       &lt;int&gt; 39, 41, 35, 18, 35, 37, 46, 38, 34, 21, 19, 54, 3…
+## $ perc_alcohol        &lt;int&gt; 30, 25, 28, 26, 28, 28, 36, 30, 27, 29, 25, 41, 2…
+## $ perc_not_distracted &lt;int&gt; 96, 90, 84, 94, 91, 79, 87, 87, 100, 92, 95, 82, …
+## $ perc_no_previous    &lt;int&gt; 80, 94, 96, 95, 89, 95, 82, 99, 100, 94, 93, 87, …
+## $ insurance_premiums  &lt;dbl&gt; 784.55, 1053.48, 899.47, 827.34, 878.41, 835.50, …
+## $ losses              &lt;dbl&gt; 145.08, 133.93, 110.35, 142.39, 165.63, 139.91, 1…</code></pre>
+<pre class="r"><code>data(&quot;murder_2015_final&quot;)
+data(&quot;bad_drivers&quot;)
+murder &lt;- murder_2015_final
+drivers &lt;- bad_drivers</code></pre>
+<p>I chose to analyze the data sets “bad_drivers” and “murder_2015_final”. The bad_drivers data set contains numeric information measuring which state has the best and the worst drivers. The variables measuring each states’ driving capabilites are, the number of drivers in the state who were in a car accident, the percentage of accidents that involved speeding, alcohol, no distractions, the percentage of drivers that had no previous driving violations, insurance premiums and losses. The murder_2015_final data set contains information on the number of murders in 2014 and 2015, and the different between the 2 years for various cities in the United States. Both of these data sets were found using the “fivethirtyeight” package. I chose these data sets to analyze the relationships between murder rates and poor driving. I want to determine if states with bad drivers have higer murder rates, possibly due to road rage.</p>
+</div>
+<div id="tidying" class="section level2">
+<h2>Tidying</h2>
+<pre class="r"><code>murder &lt;- murder %&gt;% pivot_longer(3:4, values_to = &quot;murder&quot;) %&gt;% separate(name, into = c(NA, &quot;year&quot;)) %&gt;% select(-change)
+drivers_untidy &lt;- drivers %&gt;% pivot_wider(names_from = &quot;state&quot;, values_from = &quot;losses&quot;)</code></pre>
+<p>I pivoted murder_2015_final longer to in order to tidy the data set and give year it’s own column, making it a seperate variable. I pivoted the bad_drivers data set wider to make it untidy. In the untidy data set each state has its own column and therefore many rows are filled with NAs.</p>
+</div>
+<div id="joining" class="section level2">
+<h2>Joining</h2>
+<pre class="r"><code>d_b &lt;- left_join(drivers, murder, by=&quot;state&quot;)
+d_b &lt;- d_b%&gt;%na.omit()</code></pre>
+<p>Both data sets contained “states” as the common variable. I chose to perform a left join so the murder data set would be added to the bad drivers data set. This was simple join and allowed me to see the driving and murder statistics for each state very clearly. I omitted all the NA values so the data would be easier to work with.</p>
+</div>
+<div id="wrangling" class="section level2">
+<h2>Wrangling</h2>
+<pre class="r"><code>d_b %&gt;% filter(state == &quot;California&quot; &amp; losses&gt;=150)</code></pre>
+<pre><code>## # A tibble: 30 x 11
+##    state num_drivers perc_speeding perc_alcohol perc_not_distra…
+##    &lt;chr&gt;       &lt;dbl&gt;         &lt;int&gt;        &lt;int&gt;            &lt;int&gt;
+##  1 Cali…          12            35           28               91
+##  2 Cali…          12            35           28               91
+##  3 Cali…          12            35           28               91
+##  4 Cali…          12            35           28               91
+##  5 Cali…          12            35           28               91
+##  6 Cali…          12            35           28               91
+##  7 Cali…          12            35           28               91
+##  8 Cali…          12            35           28               91
+##  9 Cali…          12            35           28               91
+## 10 Cali…          12            35           28               91
+## # … with 20 more rows, and 6 more variables: perc_no_previous &lt;int&gt;,
+## #   insurance_premiums &lt;dbl&gt;, losses &lt;dbl&gt;, city &lt;chr&gt;, year &lt;chr&gt;,
+## #   murder &lt;int&gt;</code></pre>
+<pre class="r"><code>d_b %&gt;% arrange(insurance_premiums)</code></pre>
+<pre><code>## # A tibble: 164 x 11
+##    state num_drivers perc_speeding perc_alcohol perc_not_distra…
+##    &lt;chr&gt;       &lt;dbl&gt;         &lt;int&gt;        &lt;int&gt;            &lt;int&gt;
+##  1 Wisc…        13.8            36           33               39
+##  2 Wisc…        13.8            36           33               39
+##  3 Ohio         14.1            28           34               99
+##  4 Ohio         14.1            28           34               99
+##  5 Ohio         14.1            28           34               99
+##  6 Ohio         14.1            28           34               99
+##  7 Ohio         14.1            28           34               99
+##  8 Ohio         14.1            28           34               99
+##  9 Ohio         14.1            28           34               99
+## 10 Ohio         14.1            28           34               99
+## # … with 154 more rows, and 6 more variables: perc_no_previous &lt;int&gt;,
+## #   insurance_premiums &lt;dbl&gt;, losses &lt;dbl&gt;, city &lt;chr&gt;, year &lt;chr&gt;,
+## #   murder &lt;int&gt;</code></pre>
+<pre class="r"><code>d_b %&gt;% arrange(desc(state), desc(murder), desc(insurance_premiums))</code></pre>
+<pre><code>## # A tibble: 164 x 11
+##    state num_drivers perc_speeding perc_alcohol perc_not_distra…
+##    &lt;chr&gt;       &lt;dbl&gt;         &lt;int&gt;        &lt;int&gt;            &lt;int&gt;
+##  1 Wisc…        13.8            36           33               39
+##  2 Wisc…        13.8            36           33               39
+##  3 Wash…        10.6            42           33               82
+##  4 Wash…        10.6            42           33               82
+##  5 Virg…        12.7            19           27               87
+##  6 Virg…        12.7            19           27               87
+##  7 Texas        19.4            40           38               91
+##  8 Texas        19.4            40           38               91
+##  9 Texas        19.4            40           38               91
+## 10 Texas        19.4            40           38               91
+## # … with 154 more rows, and 6 more variables: perc_no_previous &lt;int&gt;,
+## #   insurance_premiums &lt;dbl&gt;, losses &lt;dbl&gt;, city &lt;chr&gt;, year &lt;chr&gt;,
+## #   murder &lt;int&gt;</code></pre>
+<pre class="r"><code>d_b %&gt;% select(city, num_drivers)</code></pre>
+<pre><code>## # A tibble: 164 x 2
+##    city      num_drivers
+##    &lt;chr&gt;           &lt;dbl&gt;
+##  1 Mobile           18.8
+##  2 Mobile           18.8
+##  3 Anchorage        18.1
+##  4 Anchorage        18.1
+##  5 Mesa             18.6
+##  6 Mesa             18.6
+##  7 Chandler         18.6
+##  8 Chandler         18.6
+##  9 Phoenix          18.6
+## 10 Phoenix          18.6
+## # … with 154 more rows</code></pre>
+<pre class="r"><code>d_b %&gt;% mutate(meanlosses = mean(losses))</code></pre>
+<pre><code>## # A tibble: 164 x 12
+##    state num_drivers perc_speeding perc_alcohol perc_not_distra…
+##    &lt;chr&gt;       &lt;dbl&gt;         &lt;int&gt;        &lt;int&gt;            &lt;int&gt;
+##  1 Alab…        18.8            39           30               96
+##  2 Alab…        18.8            39           30               96
+##  3 Alas…        18.1            41           25               90
+##  4 Alas…        18.1            41           25               90
+##  5 Ariz…        18.6            35           28               84
+##  6 Ariz…        18.6            35           28               84
+##  7 Ariz…        18.6            35           28               84
+##  8 Ariz…        18.6            35           28               84
+##  9 Ariz…        18.6            35           28               84
+## 10 Ariz…        18.6            35           28               84
+## # … with 154 more rows, and 7 more variables: perc_no_previous &lt;int&gt;,
+## #   insurance_premiums &lt;dbl&gt;, losses &lt;dbl&gt;, city &lt;chr&gt;, year &lt;chr&gt;,
+## #   murder &lt;int&gt;, meanlosses &lt;dbl&gt;</code></pre>
+<pre class="r"><code>d_b %&gt;% summarize(mean(num_drivers, na.rm=T), n(), n_distinct(city))</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   `mean(num_drivers, na.rm = T)` `n()` `n_distinct(city)`
+##                            &lt;dbl&gt; &lt;int&gt;              &lt;int&gt;
+## 1                           15.5   164                 82</code></pre>
+<pre class="r"><code>d_b %&gt;% group_by(state, city)</code></pre>
+<pre><code>## # A tibble: 164 x 11
+## # Groups:   state, city [82]
+##    state num_drivers perc_speeding perc_alcohol perc_not_distra…
+##    &lt;chr&gt;       &lt;dbl&gt;         &lt;int&gt;        &lt;int&gt;            &lt;int&gt;
+##  1 Alab…        18.8            39           30               96
+##  2 Alab…        18.8            39           30               96
+##  3 Alas…        18.1            41           25               90
+##  4 Alas…        18.1            41           25               90
+##  5 Ariz…        18.6            35           28               84
+##  6 Ariz…        18.6            35           28               84
+##  7 Ariz…        18.6            35           28               84
+##  8 Ariz…        18.6            35           28               84
+##  9 Ariz…        18.6            35           28               84
+## 10 Ariz…        18.6            35           28               84
+## # … with 154 more rows, and 6 more variables: perc_no_previous &lt;int&gt;,
+## #   insurance_premiums &lt;dbl&gt;, losses &lt;dbl&gt;, city &lt;chr&gt;, year &lt;chr&gt;,
+## #   murder &lt;int&gt;</code></pre>
+<pre class="r"><code>d_b %&gt;% summarize(mean(num_drivers, na.rm=T))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `mean(num_drivers, na.rm = T)`
+##                            &lt;dbl&gt;
+## 1                           15.5</code></pre>
+<pre class="r"><code>d_b %&gt;% summarize(sd(perc_speeding, na.rm = T))                  </code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `sd(perc_speeding, na.rm = T)`
+##                            &lt;dbl&gt;
+## 1                           8.72</code></pre>
+<pre class="r"><code>d_b %&gt;% summarize(cor(insurance_premiums, murder))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `cor(insurance_premiums, murder)`
+##                               &lt;dbl&gt;
+## 1                             0.165</code></pre>
+<pre class="r"><code>d_b %&gt;% summarize(min(perc_not_distracted))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `min(perc_not_distracted)`
+##                        &lt;int&gt;
+## 1                         39</code></pre>
+<pre class="r"><code>d_b %&gt;% summarize(max(perc_no_previous))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `max(perc_no_previous)`
+##                     &lt;int&gt;
+## 1                      99</code></pre>
+<pre class="r"><code>d_b %&gt;% summarize(IQR(losses))                  </code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `IQR(losses)`
+##           &lt;dbl&gt;
+## 1          26.3</code></pre>
+<pre class="r"><code>d_b %&gt;% summarize(median(murder))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `median(murder)`
+##              &lt;dbl&gt;
+## 1             34.5</code></pre>
+<pre class="r"><code>d_b %&gt;% group_by(state, city) %&gt;% summarize(mean(num_drivers))</code></pre>
+<pre><code>## # A tibble: 82 x 3
+## # Groups:   state [33]
+##    state      city        `mean(num_drivers)`
+##    &lt;chr&gt;      &lt;chr&gt;                     &lt;dbl&gt;
+##  1 Alabama    Mobile                     18.8
+##  2 Alaska     Anchorage                  18.1
+##  3 Arizona    Chandler                   18.6
+##  4 Arizona    Mesa                       18.6
+##  5 Arizona    Phoenix                    18.6
+##  6 Arizona    Tucson                     18.6
+##  7 California Anaheim                    12  
+##  8 California Bakersfield                12  
+##  9 California Chula Vista                12  
+## 10 California Fresno                     12  
+## # … with 72 more rows</code></pre>
+<p>In the first part of the wrangling data I exemplify my ability to manipulate my joined data set in order to find different information. I can filter for certain states, and the data set can be manipulated to be in the order of descending numeric variables like, insurance premiums, losses, and percentage of drivers that were not distracted, speeding, drunk or have no previous offenses. Since I am interested in the correlation between bad driving and the numer of murders in each state, filtering by state and murder rate is the most useful.</p>
+<p>In the second part of wrangling I summarize the data set through various different functions. Using the summarize functions allows me to see snapshots of the different numeric varaibles instead of having to search through the entire data set. The most useful summary tool is the cor function which allows me to see the correlation between insurance premiums and the number of murders. In this case, the correlation is 0.165334 which is very weak.</p>
+</div>
+<div id="visualizing" class="section level2">
+<h2>Visualizing</h2>
+<pre class="r"><code>d_b%&gt;%select_if(is.numeric)%&gt;%cor%&gt;%as.data.frame%&gt;%rownames_to_column%&gt;%pivot_longer(-1)%&gt;%ggplot(aes(rowname,name,fill=value))+geom_tile()+geom_text(aes(label=round(value,2)))+xlab(&quot;&quot;)+ylab(&quot;&quot;)+scale_fill_gradient2(low=&quot;red&quot;,high=&quot;blue&quot;)+theme(axis.text.x = element_text(angle=45, hjust=1))</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-6-1.png" width="672" /> This correlation heat map shows the strength of the correlation between the numeric variables. The darker the shade of blue, the stronger the correlaiton. This plot does not show that any of the numeric variables are strongly correlated. The highest correlation value is 0.42 between insurance premiums and losses. The second highest correlation value is 0.41 which is between the percentage of drivers that were drunk and the percentage of dirvers that were speeding. The number of murders is not strongly correlated with any of the driving variables. However, losses and insurance premiums have the highest correlation with murders with a value of 0.17.</p>
+<pre class="r"><code>d_b %&gt;% ggplot(aes(reorder(state, insurance_premiums), insurance_premiums, color=murder)) + geom_point()+theme(axis.text.x = element_text(angle=45, hjust=1))</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-7-1.png" width="672" /> This plot orders the states from lowest to highestt insurance premiums, and the color of the data marker represents the number of murders in the state. Illinois has fairly low insurance premiums, but one of the highest murder rates. On the other hand, New Jersey has the highest insurance premiums, but a low murder rate. This plot shows that there is no strong correlation between murder rate and insurance premiums for each state.</p>
+<pre class="r"><code>d_b %&gt;% ggplot(aes(perc_alcohol, murder, color=state, size=num_drivers,label=paste(city,year)))+
+  geom_text()+theme(legend.position = &quot;none&quot;)</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-8-1.png" width="672" /> In this plot the number of drivers involved in a car accident in each state is represented in the size of the font, the larger the font the more drivers involved in an accident. The plot is comparing the percentage of drunk drivers in a car accident and the murder rate of different cities, and each state has its own unique color. In almost every city the murder rate increased from 2014 to 2015. Although it is hard to read because of the overlapping text, there is no obvious relationship between the percentage of drunk drivers and the murder rates in each state.</p>
+<pre class="r"><code>d_b %&gt;% ggplot(aes(state, murder, fill=state))+ geom_bar(stat = &quot;summary&quot;)+theme(legend.position=&quot;none&quot;,axis.text.x = element_text(angle=45, hjust=1))+geom_errorbar(stat = &quot;summary&quot;)+scale_y_continuous(breaks = seq(0,500,50))</code></pre>
+<pre><code>## No summary function supplied, defaulting to `mean_se()`
+## No summary function supplied, defaulting to `mean_se()`</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-9-1.png" width="672" /> This bar graph compares the murder rates between the different states. The states with the highest number of murders are, Illinois, Maryland, Michigan, New York and Pennsylvania. Michigan has a very small error bar while Maryland, New York and Pennsylvania have very large error bars. The states with the lowerst murder rates are, Alaska, Hawaii, Nebraska and Virginia. The difference in murder rates between the states could be due the difference in state population and the number of large urban centers, although that relationship is not measured in this plot.</p>
+</div>
+<div id="dimensionality-reduction" class="section level2">
+<h2>Dimensionality Reduction</h2>
+<pre class="r"><code>d_b %&gt;% select_if(is.numeric) %&gt;% cor</code></pre>
+<pre><code>##                     num_drivers perc_speeding perc_alcohol perc_not_distracted
+## num_drivers          1.00000000    0.13831828   0.24526589       -0.0233081227
+## perc_speeding        0.13831828    1.00000000   0.40952364        0.0614360445
+## perc_alcohol         0.24526589    0.40952364   1.00000000        0.1858666115
+## perc_not_distracted -0.02330812    0.06143604   0.18586661        1.0000000000
+## perc_no_previous     0.05085153    0.08798674  -0.09221386       -0.0841689263
+## insurance_premiums   0.11274114   -0.08765186   0.03085291        0.0006595165
+## losses              -0.05605930    0.14676190   0.01896512        0.1853592120
+## murder              -0.03732636    0.07523417   0.10351544       -0.0067699712
+##                     perc_no_previous insurance_premiums      losses
+## num_drivers              0.050851533       0.1127411422 -0.05605930
+## perc_speeding            0.087986743      -0.0876518617  0.14676190
+## perc_alcohol            -0.092213864       0.0308529074  0.01896512
+## perc_not_distracted     -0.084168926       0.0006595165  0.18535921
+## perc_no_previous         1.000000000       0.1168851035 -0.01470896
+## insurance_premiums       0.116885103       1.0000000000  0.41509896
+## losses                  -0.014708963       0.4150989566  1.00000000
+## murder                  -0.008032047       0.1653340044  0.16699939
+##                           murder
+## num_drivers         -0.037326363
+## perc_speeding        0.075234169
+## perc_alcohol         0.103515442
+## perc_not_distracted -0.006769971
+## perc_no_previous    -0.008032047
+## insurance_premiums   0.165334004
+## losses               0.166999391
+## murder               1.000000000</code></pre>
+<pre class="r"><code>library(cluster)
+sil_width&lt;-vector()
+for(i in 2:10){
+  pam_fit &lt;- d_b%&gt;%select_if(is.numeric)%&gt;%pam(i)
+  sil_width[i] &lt;- pam_fit$silinfo$avg.width
+}
+ggplot()+geom_line(aes(x=1:10,y=sil_width))+scale_x_continuous(name=&quot;k&quot;,breaks=1:10)</code></pre>
+<pre><code>## Warning: Removed 1 row(s) containing missing values (geom_path).</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>pam_fit &lt;- d_b%&gt;%select_if(is.numeric)%&gt;%pam(2)
+pam_fit</code></pre>
+<pre><code>## Medoids:
+##      ID num_drivers perc_speeding perc_alcohol perc_not_distracted
+## [1,] 43        13.6            37           28                  79
+## [2,]  4        18.1            41           25                  90
+##      perc_no_previous insurance_premiums losses murder
+## [1,]               95             835.50 139.91     31
+## [2,]               94            1053.48 133.93     26
+## Clustering vector:
+##   [1] 1 1 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+##  [38] 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+##  [75] 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 1 1 2 2 2 2 1 1 1
+## [112] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2
+## [149] 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1
+## Objective function:
+##    build     swap 
+## 110.3900 107.0071 
+## 
+## Available components:
+##  [1] &quot;medoids&quot;    &quot;id.med&quot;     &quot;clustering&quot; &quot;objective&quot;  &quot;isolation&quot; 
+##  [6] &quot;clusinfo&quot;   &quot;silinfo&quot;    &quot;diss&quot;       &quot;call&quot;       &quot;data&quot;</code></pre>
+<pre class="r"><code>library(GGally)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;GGally&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     nasa</code></pre>
+<pre class="r"><code>d_b%&gt;%mutate(cluster=as.factor(pam_fit$clustering))%&gt;%
+  ggpairs(columns = 2:8,aes(color=cluster))</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-10-2.png" width="672" /> The first step to the clustering analysis is determing the corect number of clusters to analyze the data. The line graph shows that 2 or 5 clusters would be the best to analyze the data because these points have the highest sil_width values. I chose to use 2 clusters because that is more manageable than 5. The cluster analysis graphs show the relationship of the numeric varaibles between the clusters. Overall, there not a strong correlation between the numeric variables. The strongest overall correlation is 0.415 between losses and insurance premiums. The smallest correlation value is -0.0922 between the percent of drivers that were not distracted and the percent of drivers that had no previous violations. Throughout my entire analysis I have found no significant correlation between bad driving and the murder rates in each state. There appears to be no relationship between the bad_drivers dataset and the murder_2015_final dataset.</p>
+<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+</div>

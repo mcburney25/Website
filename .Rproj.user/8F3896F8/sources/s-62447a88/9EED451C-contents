@@ -1,0 +1,121 @@
+---
+title: "Project 1"
+author: "Elizabeth McBurney"
+date: '2020-05-15'
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+## Introduction
+
+```{R}
+#install.packages("fivethirtyeight")
+library(fivethirtyeight)
+#install.packages("tidyverse")
+library(tidyverse)
+
+glimpse(murder_2015_final)
+glimpse(bad_drivers)
+data("murder_2015_final")
+data("bad_drivers")
+murder <- murder_2015_final
+drivers <- bad_drivers
+```
+I chose to analyze the data sets "bad_drivers" and "murder_2015_final". The bad_drivers data set contains numeric information measuring which state has the best and the worst drivers. The variables measuring each states' driving capabilites are, the number of drivers in the state who were in a car accident, the percentage of accidents that involved speeding, alcohol, no distractions, the percentage of drivers that had no previous driving violations, insurance premiums and losses. The murder_2015_final data set contains information on the number of murders in 2014 and 2015, and the different between the 2 years for various cities in the United States. Both of these data sets were found using the "fivethirtyeight" package. I chose these data sets to analyze the relationships between murder rates and poor driving. I want to determine if states with bad drivers have higer murder rates, possibly due to road rage. 
+
+## Tidying 
+
+```{R}
+murder <- murder %>% pivot_longer(3:4, values_to = "murder") %>% separate(name, into = c(NA, "year")) %>% select(-change)
+drivers_untidy <- drivers %>% pivot_wider(names_from = "state", values_from = "losses")
+```
+I pivoted murder_2015_final longer to in order to tidy the data set and give year it's own column, making it a seperate variable. I pivoted the bad_drivers data set wider to make it untidy. In the untidy data set each state has its own column and therefore many rows are filled with NAs. 
+
+## Joining
+
+```{R}
+d_b <- left_join(drivers, murder, by="state")
+d_b <- d_b%>%na.omit()
+```
+Both data sets contained "states" as the common variable. I chose to perform a left join so the murder data set would be added to the bad drivers data set. This was simple join and allowed me to see the driving and murder statistics for each state very clearly. I omitted all the NA values so the data would be easier to work with. 
+
+## Wrangling
+
+```{R}
+d_b %>% filter(state == "California" & losses>=150)
+d_b %>% arrange(insurance_premiums)
+d_b %>% arrange(desc(state), desc(murder), desc(insurance_premiums))
+d_b %>% select(city, num_drivers)
+d_b %>% mutate(meanlosses = mean(losses))
+d_b %>% summarize(mean(num_drivers, na.rm=T), n(), n_distinct(city))
+d_b %>% group_by(state, city)
+```
+
+```{R}
+d_b %>% summarize(mean(num_drivers, na.rm=T))
+d_b %>% summarize(sd(perc_speeding, na.rm = T))                  
+d_b %>% summarize(cor(insurance_premiums, murder))
+d_b %>% summarize(min(perc_not_distracted))
+d_b %>% summarize(max(perc_no_previous))
+d_b %>% summarize(IQR(losses))                  
+d_b %>% summarize(median(murder))
+
+d_b %>% group_by(state, city) %>% summarize(mean(num_drivers))
+```
+In the first part of the wrangling data I exemplify my ability to manipulate my joined data set in order to find different information. I can filter for certain states, and the data set can be manipulated to be in the order of descending numeric variables like, insurance premiums, losses, and percentage of drivers that were not distracted, speeding, drunk or have no previous offenses. Since I am interested in the correlation between bad driving and the numer of murders in each state, filtering by state and murder rate is the most useful.
+
+In the second part of wrangling I summarize the data set through various different functions. Using the summarize functions allows me to see snapshots of the different numeric varaibles instead of having to search through the entire data set. The most useful summary tool is the cor function which allows me to see the correlation between insurance premiums and the number of murders. In this case, the correlation is 0.165334 which is very weak. 
+
+## Visualizing
+```{R}
+d_b%>%select_if(is.numeric)%>%cor%>%as.data.frame%>%rownames_to_column%>%pivot_longer(-1)%>%ggplot(aes(rowname,name,fill=value))+geom_tile()+geom_text(aes(label=round(value,2)))+xlab("")+ylab("")+scale_fill_gradient2(low="red",high="blue")+theme(axis.text.x = element_text(angle=45, hjust=1))
+```
+This correlation heat map shows the strength of the correlation between the numeric variables. The darker the shade of blue, the stronger the correlaiton. This plot does not show that any of the numeric variables are strongly correlated. The highest correlation value is 0.42 between insurance premiums and losses. The second highest correlation value is 0.41 which is between the percentage of drivers that were drunk and the percentage of dirvers that were speeding. The number of murders is not strongly correlated with any of the driving variables. However, losses and insurance premiums have the highest correlation with murders with a value of 0.17. 
+
+```{R}
+d_b %>% ggplot(aes(reorder(state, insurance_premiums), insurance_premiums, color=murder)) + geom_point()+theme(axis.text.x = element_text(angle=45, hjust=1))
+```
+This plot orders the states from lowest to highestt insurance premiums, and the color of the data marker represents the number of murders in the state. Illinois has fairly low insurance premiums, but one of the highest murder rates. On the other hand, New Jersey has the highest insurance premiums, but a low murder rate. This plot shows that there is no strong correlation between murder rate and insurance premiums for each state.  
+
+```{R}
+d_b %>% ggplot(aes(perc_alcohol, murder, color=state, size=num_drivers,label=paste(city,year)))+
+  geom_text()+theme(legend.position = "none")
+```
+In this plot the number of drivers involved in a car accident in each state is represented in the size of the font, the larger the font the more drivers involved in an accident. The plot is comparing the percentage of drunk drivers in a car accident and the murder rate of different cities, and each state has its own unique color. In almost every city the murder rate increased from 2014 to 2015. Although it is hard to read because of the overlapping text, there is no obvious relationship between the percentage of drunk drivers and the murder rates in each state.  
+
+```{R}
+d_b %>% ggplot(aes(state, murder, fill=state))+ geom_bar(stat = "summary")+theme(legend.position="none",axis.text.x = element_text(angle=45, hjust=1))+geom_errorbar(stat = "summary")+scale_y_continuous(breaks = seq(0,500,50))
+```
+This bar graph compares the murder rates between the different states. The states with the highest number of murders are, Illinois, Maryland, Michigan, New York and Pennsylvania. Michigan has a very small error bar while Maryland, New York and Pennsylvania have very large error bars. The states with the lowerst murder rates are, Alaska, Hawaii, Nebraska and Virginia. The difference in murder rates between the states could be due the difference in state population and the number of large urban centers, although that relationship is not measured in this plot.  
+
+## Dimensionality Reduction
+```{R}
+d_b %>% select_if(is.numeric) %>% cor
+library(cluster)
+sil_width<-vector()
+for(i in 2:10){
+  pam_fit <- d_b%>%select_if(is.numeric)%>%pam(i)
+  sil_width[i] <- pam_fit$silinfo$avg.width
+}
+ggplot()+geom_line(aes(x=1:10,y=sil_width))+scale_x_continuous(name="k",breaks=1:10)
+
+pam_fit <- d_b%>%select_if(is.numeric)%>%pam(2)
+pam_fit
+library(GGally)
+d_b%>%mutate(cluster=as.factor(pam_fit$clustering))%>%
+  ggpairs(columns = 2:8,aes(color=cluster))
+```
+The first step to the clustering analysis is determing the corect number of clusters to analyze the data. The line graph shows that 2 or 5 clusters would be the best to analyze the data because these points have the highest sil_width values. I chose to use 2 clusters because that is more manageable than 5. The cluster analysis graphs show the relationship of the numeric varaibles between the clusters. Overall, there not a strong correlation between the numeric variables. The strongest overall correlation is 0.415 between losses and insurance premiums. The smallest correlation value is -0.0922 between the percent of drivers that were not distracted and the percent of drivers that had no previous violations. Throughout my entire analysis I have found no significant correlation between bad driving and the murder rates in each state. There appears to be no relationship between the bad_drivers dataset and the murder_2015_final dataset.  
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
