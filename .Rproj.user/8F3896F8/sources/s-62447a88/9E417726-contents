@@ -9,18 +9,67 @@ description: ''
 ---
 
 ```{python}
-2+2
-x='dog'
+x=["apple", "banana", "carrot", "dog", "eggplant", ]
 ```
 
 ```{R}
 library(reticulate)
 py$x
+head(women)
+y <- women
 ```
+
+```{python}
+r.y>60
+```
+
 ```{python}
 import re
 string1="We have to extract these numbers 12, 47, 48 The integers numbers are also interesting: 189 2036 314\',\' is a separator, so please extract these numbers 125,789,1450 and also these 564,90456 We like to offer you 7890$ per month in order to complete this task... we are joking"
 print(string1)
-
 re.findall(r"\d+", string1)
+y=re.findall(r"\d+", string1)
+
+my_seq1 = "ATCATCATG"
+my_seq2 = "CAGCCCAATCAGGCTCTACTGCCACTAAACTTACGCAGGATATATTTACGCCGACGTACT"
+
+i=0
+store=[]
+while i <=len(my_seq1)-3:
+    store.append(my_seq1[i:i+3])
+    i += 1
+
+print(store)
+
+def count_chars(store):
+    counts={}
+    for c in store:
+        if c in counts:
+            counts[c]+=1
+        else:
+            counts[c]=1
+    for c in counts:
+        print(c, "appears", counts[c], "times")
+count_chars(store)
 ```
+
+```{python}
+i=0
+store=[]
+while i <=len(my_seq2)-3:
+    store.append(my_seq2[i:i+3])
+    i += 1
+
+print(store)
+def count_chars(store):
+    counts={}
+    for c in store:
+        if c in counts:
+            counts[c]+=1
+        else:
+            counts[c]=1
+    for c in counts:
+        print(c, "appears", counts[c], "times")
+count_chars(store)
+```
+
